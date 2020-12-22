@@ -30,6 +30,7 @@ from .base cimport _Algorithm, Algorithm
 from .graph cimport _Graph, Graph
 from .structures cimport _Partition, Partition, _Cover, Cover
 from .graphio import PartitionReader, PartitionWriter, EdgeListPartitionReader, BinaryPartitionReader, BinaryPartitionWriter, BinaryEdgeListPartitionReader, BinaryEdgeListPartitionWriter
+from .scd cimport _SelectiveCommunityDetector, SelectiveCommunityDetector
 
 from . import graph
 from .centrality import CoreDecomposition
@@ -37,6 +38,7 @@ from .coarsening import ParallelPartitionCoarsening
 from . import stopwatch
 from . import graphio
 from .support import MissingDependencyError
+from cython.operator import dereference
 
 cdef extern from "<algorithm>" namespace "std":
 	pair[_Graph, vector[node]] move(pair[_Graph, vector[node]]) nogil
@@ -77,6 +79,32 @@ cdef class CommunityDetector(Algorithm):
 		if self._this == NULL:
 			raise RuntimeError("Error, object not properly initialized")
 		return Partition().setThis((<_CommunityDetectionAlgorithm*>(self._this)).getPartition())
+
+cdef extern from "<networkit/community/OverlappingCommunityDetectionAlgorithm.hpp>":
+
+	cdef cppclass _OverlappingCommunityDetectionAlgorithm "NetworKit::OverlappingCommunityDetectionAlgorithm"(_Algorithm):
+		_OverlappingCommunityDetectionAlgorithm(const _Graph &_G)
+		_Cover getCover() except +
+
+cdef class OverlappingCommunityDetector(Algorithm):
+	""" Abstract base class for static overlapping community detection algorithms """
+
+	cdef Graph _G
+	def __init__(self, *args, **namedargs):
+		if type(self) == OverlappingCommunityDetector:
+			raise RuntimeError("Error, you may not use OverlappingCommunityDetector directly, use a sub-class instead")
+
+	def getCover(self):
+		"""  Returns a cover of the clustering.
+
+		Returns:
+		--------
+		networkit.Cover:
+			A Cover of the clustering.
+		"""
+		if self._this == NULL:
+			raise RuntimeError("Error, object not properly initialized")
+		return Cover().setThis((<_OverlappingCommunityDetectionAlgorithm*>(self._this)).getCover())
 
 # Fused type for methods that accept both a partition and a cover
 ctypedef fused PartitionCover:
@@ -455,6 +483,19 @@ cdef class PLP(CommunityDetector):
 			The list of running times in milliseconds.
 		"""
 		return (<_PLP*>(self._this)).getTiming()
+
+cdef extern from "<networkit/community/LFM.hpp>":
+
+	cdef cppclass _LFM "NetworKit::LFM"(_OverlappingCommunityDetectionAlgorithm):
+		_LFM(_Graph _G, _SelectiveCommunityDetector _scd) except +
+
+cdef class LFM(OverlappingCommunityDetector):
+	cdef SelectiveCommunityDetector _scd
+
+	def __cinit__(self, Graph G not None, SelectiveCommunityDetector scd not None):
+		self._G = G
+		self._scd = scd
+		self._this = new _LFM(G._this, dereference(scd._this))
 
 cdef extern from "<networkit/community/LPDegreeOrdered.hpp>":
 
