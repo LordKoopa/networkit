@@ -6,6 +6,7 @@
  */
 
 #include <networkit/community/LFM.hpp>
+#include <iostream>
 
 namespace NetworKit {
     
@@ -17,17 +18,15 @@ void LFM::run() {
     Cover zeta(z);
     index o = 0;
     zeta.setUpperBound(o);
-    std::vector<bool> inCommunity(z + 1, false);
 
     G->forNodesInRandomOrder([&](node u) {
-        if (!inCommunity[u]){
+        if (!zeta.contains(u)/*inCommunity[u]*/){
             std::set<node> community = scd.expandOneCommunity(u);
             o++;
             zeta.setUpperBound(o);
 
             for (auto n : community) {
                 zeta.addToSubset(o - 1, n);
-                inCommunity[u] = true;
             }
         }
     });
