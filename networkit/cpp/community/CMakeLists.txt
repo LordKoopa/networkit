@@ -17,12 +17,14 @@ networkit_add_module(community
     IsolatedInterpartitionConductance.cpp
     IsolatedInterpartitionExpansion.cpp
     JaccardMeasure.cpp
+    LFM.cpp
     LPDegreeOrdered.cpp
     LocalCoverEvaluation.cpp
     LocalPartitionEvaluation.cpp
     Modularity.cpp
     NMIDistance.cpp
     NodeStructuralRandMeasure.cpp
+    OverlappingCommunityDetectionAlgorithm.cpp
     PLM.cpp
     PLP.cpp
     ParallelAgglomerativeClusterer.cpp
