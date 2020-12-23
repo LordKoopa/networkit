@@ -16,7 +16,7 @@ OverlappingCommunityDetectionAlgorithm::OverlappingCommunityDetectionAlgorithm(c
     }
 }
 
-OverlappingCommunityDetectionAlgorithm::OverlappingCommunityDetectionAlgorithm(const Graph& G, const Partition baseClustering) : Algorithm(), G(&G), result(baseClustering) {
+OverlappingCommunityDetectionAlgorithm::OverlappingCommunityDetectionAlgorithm(const Graph& G, const Cover baseClustering) : Algorithm(), G(&G), result(baseClustering) {
 }
 
 Cover OverlappingCommunityDetectionAlgorithm::getCover() {
