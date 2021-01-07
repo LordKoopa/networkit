@@ -38,7 +38,10 @@
 #include <networkit/community/PartitionFragmentation.hpp>
 #include <networkit/generators/ClusteredRandomGraphGenerator.hpp>
 #include <networkit/generators/ErdosRenyiGenerator.hpp>
+#include <networkit/generators/LFRGenerator.hpp>
 #include <networkit/community/CoverF1Similarity.hpp>
+#include <networkit/community/LFM.hpp>
+#include <networkit/scd/LocalTightnessExpansion.hpp>
 
 #include <tlx/unused.hpp>
 
@@ -720,6 +723,32 @@ TEST_F(CommunityGTest, testCoverF1Similarity) {
     EXPECT_DOUBLE_EQ(0.0, sim.getValue(2));
     EXPECT_DOUBLE_EQ((1.0 + f1) / 3.0, sim.getUnweightedAverage());
     EXPECT_DOUBLE_EQ((1.0 * 10.0 + f1 * 10.0) / 29.0, sim.getWeightedAverage());
+}
+
+TEST_F(CommunityGTest, testLFM) {
+    LFRGenerator lfr(1000);
+    lfr.generatePowerlawDegreeSequence(20, 50, -2);
+    lfr.generatePowerlawCommunitySizeSequence(20, 100, -1);
+    lfr.setMu(0.2);
+    lfr.run();
+
+    Graph G = lfr.getGraph();
+    Cover C = Cover(lfr.getPartition());
+
+    LocalTightnessExpansion scd = LocalTightnessExpansion(G);
+    LFM lfm = LFM(G, scd);
+    lfm.run();
+    Cover lfm_cover = lfm.getCover();
+
+    CoverF1Similarity sim(G, C, lfm_cover);
+    sim.run();
+
+    EXPECT_DOUBLE_EQ(1.0, sim.getMaximumValue());
+
+    CoverF1Similarity sim_rev(G, lfm_cover, C);
+    sim_rev.run();
+
+    EXPECT_DOUBLE_EQ(1.0, sim_rev.getMinimumValue());
 }
 
 } /* namespace NetworKit */
