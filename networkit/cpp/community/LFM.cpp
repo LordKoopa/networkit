@@ -6,6 +6,7 @@
  */
 
 #include <networkit/community/LFM.hpp>
+#include <networkit/auxiliary/SignalHandling.hpp>
 #include <iostream>
 
 namespace NetworKit {
@@ -13,6 +14,8 @@ namespace NetworKit {
 LFM::LFM(const Graph &G, SelectiveCommunityDetector &scd) : OverlappingCommunityDetectionAlgorithm(G), scd(scd) {}
 
 void LFM::run() {
+    Aux::SignalHandler handler;
+
     count z = G->upperNodeIdBound();
 
     Cover zeta(z);
@@ -20,10 +23,13 @@ void LFM::run() {
     zeta.setUpperBound(o);
 
     G->forNodesInRandomOrder([&](node u) {
+        handler.assureRunning();
         if (!zeta.contains(u)/*inCommunity[u]*/){
             std::set<node> community = scd.expandOneCommunity(u);
             o++;
             zeta.setUpperBound(o);
+
+            handler.assureRunning();
 
             for (auto n : community) {
                 zeta.addToSubset(o - 1, n);
