@@ -2,8 +2,9 @@
  * LFM.hpp
  *
  *  Created on 10.12.2020
- *      Author: jgelkoops
+ *      Author: John Gelhausen
  */
+// networkit-format
 
 #ifndef NETWORKIT_COMMUNITY_LFM_HPP_
 #define NETWORKIT_COMMUNITY_LFM_HPP_
@@ -23,7 +24,7 @@ namespace NetworKit {
  *
  * The LFM algorithm detects overlapping communities by repeatedly
  * executing a given SelectiveCommunityDetector algorithm
- * for a random seed node that has not yet been assigned to any community.
+ * for different random seed nodes which have not yet been assigned to any community.
  */
 class LFM final : public OverlappingCommunityDetectionAlgorithm {
 public:
@@ -38,15 +39,8 @@ public:
     * Detect communities
     */
     void run() override;
-
-    /**
-    * Get string representation
-    *
-    * @return String representation of this algorithm.
-    */
-    std::string toString() const override;
 protected:
-    SelectiveCommunityDetector &scd;
+    SelectiveCommunityDetector *scd;
 };
 } /* namespace NetworKit */
 

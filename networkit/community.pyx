@@ -490,6 +490,29 @@ cdef extern from "<networkit/community/LFM.hpp>":
 		_LFM(_Graph _G, _SelectiveCommunityDetector _scd) except +
 
 cdef class LFM(OverlappingCommunityDetector):
+	""" Local community expansion algorithm:
+ 
+	The LFM algorithm detects overlapping communities by repeatedly
+	executing a given selective community detector algorithm
+	for different random seed nodes which have not yet been assigned to any community.
+
+	Parameters:
+	-----------
+	G : networkit.Graph
+		The graph on which the algorithm has to run.
+	scd : networkit.scd.SelectiveCommunityDetector
+		The selective community detector algorithm which is run on
+		randomly selected seed nodes
+
+	Notes
+	-----
+	Local community expansion algorithm as introduced in:
+
+	Lancichinetti, A., Fortunato, S., & Kertész, J. (2009).
+	Detecting the overlapping and hierarchical community structure in complex networks.
+	New Journal of Physics, 11(3), 033015.
+	https://doi.org/10.1088/1367-2630/11/3/033015
+	"""
 	cdef SelectiveCommunityDetector _scd
 
 	def __cinit__(self, Graph G not None, SelectiveCommunityDetector scd not None):

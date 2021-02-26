@@ -2,8 +2,9 @@
  * OverlappingCommunityDetectionAlgorithm.cpp
  *
  *  Created on: 14.12.2020
- *      Author: Christian Staudt
+ *      Author: John Gelhausen
  */
+// networkit-format
 
 #include <networkit/community/OverlappingCommunityDetectionAlgorithm.hpp>
 
@@ -16,18 +17,9 @@ OverlappingCommunityDetectionAlgorithm::OverlappingCommunityDetectionAlgorithm(c
     }
 }
 
-OverlappingCommunityDetectionAlgorithm::OverlappingCommunityDetectionAlgorithm(const Graph& G, const Cover baseClustering) : Algorithm(), G(&G), result(baseClustering) {
-}
-
-Cover OverlappingCommunityDetectionAlgorithm::getCover() {
-    if(!hasRun) {
-        throw std::runtime_error("Call run()-function first.");
-    }
+Cover OverlappingCommunityDetectionAlgorithm::getCover() const& {
+    assureFinished();
     return result;
-}
-
-std::string OverlappingCommunityDetectionAlgorithm::toString() const {
-    return "TODO: string representation of clusterer";
 }
 
 } /* namespace NetworKit */

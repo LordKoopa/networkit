@@ -743,12 +743,16 @@ TEST_F(CommunityGTest, testLFM) {
     CoverF1Similarity sim(G, C, lfm_cover);
     sim.run();
 
-    EXPECT_DOUBLE_EQ(1.0, sim.getMaximumValue());
+    EXPECT_GE(sim.getMaximumValue(), 0.9);
 
     CoverF1Similarity sim_rev(G, lfm_cover, C);
     sim_rev.run();
 
-    EXPECT_DOUBLE_EQ(1.0, sim_rev.getMinimumValue());
+    EXPECT_GE(sim_rev.getMinimumValue(), 0.9);
+
+    for (node u = 0; u < 1000; ++u) {
+        EXPECT_TRUE(lfm_cover.contains(u));
+    }
 }
 
 } /* namespace NetworKit */
